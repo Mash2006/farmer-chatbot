@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KrishiMitra - AI Farmer Assistant</title>
+    <title>Farmer ChatBot - AI Farmer Assistant</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -57,32 +57,32 @@
             color: #2d5016;
             text-align: center;
         }
-        .api-key-section {
+        .Farmer ChatBapi-key-section" style="display:noneot {
             background: #f9fff7;
             padding: 15px;
             border-bottom: 1px solid #ddd;
         }
-        .api-key-section label {
+        .Farmer ChatBapi-key-section" style="display:noneot label {
             display: block;
             font-weight: bold;
             margin-bottom: 8px;
             color: #2d5016;
             font-size: 13px;
         }
-        .api-key-section input {
+        .Farmer ChatBapi-key-section" style="display:noneot input {
             width: 100%;
             padding: 10px;
             border: 2px solid #2d5016;
             border-radius: 8px;
             font-size: 14px;
         }
-        .api-key-section small {
+        .Farmer ChatBapi-key-section" style="display:noneot small {
             color: #666;
             display: block;
             margin-top: 5px;
             font-size: 12px;
         }
-        .api-key-section a {
+        .Farmer ChatBapi-key-section" style="display:noneot a {
             color: #2d5016;
             text-decoration: none;
             font-weight: bold;
@@ -190,7 +190,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🌾 KrishiMitra</h1>
+            <h1>🌾 Farmer ChatBot</h1>
             <p>Your Intelligent Farming Companion</p>
             <div class="tagline">SMART AGRICULTURE • AI-POWERED • ALL LANGUAGES</div>
         </div>
@@ -199,7 +199,7 @@
             ✅ Free AI Assistance | 📱 All Languages | 🌾 For All Farming Needs
         </div>
         
-        <div class="api-key-section">
+        <div class="Farmer ChatBapi-key-section" style="display:noneot">
             <label>🔑 Enter Your Free Google Gemini API Key</label>
             <input type="text" id="apiKey" placeholder="Paste your free API key here">
             <small>Get free key: <a href="https://makersuite.google.com/app/apikey" target="_blank">Google AI Studio</a> | No credit card needed</small>
@@ -207,7 +207,7 @@
         
         <div class="chat-area" id="chatArea">
             <div class="welcome-message">
-                <h2>🌱 Welcome to KrishiMitra! 🌾</h2>
+                <h2>🌱 Welcome to Farmer ChatBot! 🌾</h2>
                 <p><strong>Your AI-Powered Smart Farming Guide</strong></p>
                 <p>Expert assistance on:</p>
                 <div class="features">
@@ -236,15 +236,15 @@
         const sendBtn = document.getElementById('sendBtn');
         const apiKeyInput = document.getElementById('apiKey');
 
-        const savedApiKey = localStorage.getItem('krishiMitraApiKey');
+        const savedApiKey = localStorage.getItem('Farmer ChatBotApiKey');
         if (savedApiKey) apiKeyInput.value = savedApiKey;
 
         apiKeyInput.addEventListener('change', () => {
-            localStorage.setItem('krishiMitraApiKey', apiKeyInput.value.trim());
+            localStorage.setItem('Farmer ChatBotApiKey', apiKeyInput.value.trim());
         });
 
         let conversationHistory = [];
-        const systemPrompt = `You are KrishiMitra, an expert agricultural AI assistant helping farmers worldwide. Provide practical advice on: crop selection & rotation, irrigation, soil health, pest control, weather, market prices, and sustainable farming. Be specific and supportive.`;
+        const systemPrompt = `You are Farmer ChatBot, an expert agricultural AI assistant helping farmers worldwide. Provide practical advice on: crop selection & rotation, irrigation, soil health, pest control, weather, market prices, and sustainable farming. Be specific and supportive.`;
 
         function addMessage(content, isUser) {
             const welcomeMsg = document.querySelector('.welcome-message');
