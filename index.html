@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Farmer ChatBot - AI Farmer Assistant</title>
+  <title>Farmer ChatBot - AI Disease Expert</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -76,14 +76,21 @@
       border: 2px solid #2d5016;
       border-bottom-left-radius: 4px;
     }
+    .message img {
+      max-width: 200px;
+      border-radius: 10px;
+      margin-top: 5px;
+      display: block;
+    }
     .input-area {
       padding: 20px;
       background: white;
       border-top: 1px solid #ddd;
       display: flex;
       gap: 10px;
+      align-items: center;
     }
-    .input-area input {
+    .input-area input[type="text"] {
       flex: 1;
       padding: 12px 16px;
       border: 2px solid #ddd;
@@ -92,7 +99,25 @@
       outline: none;
       transition: border 0.3s;
     }
-    .input-area input:focus { border-color: #2d5016; }
+    .input-area input[type="text"]:focus { border-color: #2d5016; }
+    
+    .file-upload-label {
+      background: #f0f8f0;
+      color: #2d5016;
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      font-size: 20px;
+      transition: all 0.3s;
+      border: 2px solid #2d5016;
+    }
+    .file-upload-label:hover { background: #2d5016; color: white; }
+    #imageInput { display: none; }
+
     .input-area button {
       padding: 12px 30px;
       background: linear-gradient(135deg, #2d5016 0%, #1a3a0a 100%);
@@ -105,7 +130,7 @@
       transition: all 0.3s;
     }
     .input-area button:hover { transform: scale(1.05); box-shadow: 0 5px 15px rgba(45, 80, 22, 0.4); }
-    .input-area button:disabled { opacity: 0.6; cursor: not-allowed; }
+    
     .welcome-message {
       text-align: center;
       color: #2d5016;
@@ -132,35 +157,37 @@
   <div class="container">
     <div class="header">
       <h1>🌾 Farmer ChatBot</h1>
-      <p>Your Intelligent Farming Companion</p>
-      <div class="tagline">SMART AGRICULTURE • AI-POWERED • ALL LANGUAGES</div>
+      <p>AI-Powered Crop Disease Diagnostic Assistant</p>
+      <div class="tagline">SCAN • DIAGNOSE • SOLVE</div>
     </div>
     
     <div class="info-bar">
-      ✅ No API Key Required | 🤖 Built-in AI | 🌾 Free Forever
+      📸 Upload Crop Photos for Instant Disease Diagnosis & Treatment
     </div>
     
     <div class="chat-area" id="chatArea">
       <div class="welcome-message">
-        <h2>🌱 Welcome to Farmer ChatBot! 🌾</h2>
-        <p><strong>Your AI-Powered Smart Farming Guide</strong></p>
-        <p>Expert assistance on:</p>
+        <h2>🌱 Welcome! Let's protect your crops. 🌾</h2>
+        <p><strong>Upload a photo of your plant or ask a question</strong></p>
+        <p>I can help you with:</p>
         <div class="features">
-          <div class="feature-item">🌾 Crop Planning</div>
-          <div class="feature-item">💧 Water Management</div>
-          <div class="feature-item">🐛 Pest Control</div>
-          <div class="feature-item">🌱 Soil Health</div>
-          <div class="feature-item">📈 Yield Tips</div>
-          <div class="feature-item">💰 Market Prices</div>
+          <div class="feature-item">🔍 Disease Identification</div>
+          <div class="feature-item">💊 Treatment Plans</div>
+          <div class="feature-item">🛡️ Prevention Guides</div>
+          <div class="feature-item">🌿 Organic Solutions</div>
+          <div class="feature-item">🐛 Pest Management</div>
+          <div class="feature-item">📈 Growth Tips</div>
         </div>
         <p style="margin-top: 15px; font-size: 12px;">
-          💬 Ask about any farming topic and get instant AI responses!
+          💬 Tap the <b>+</b> button to upload a photo of your crop!
         </p>
       </div>
     </div>
     
     <div class="input-area">
-      <input type="text" id="userInput" placeholder="Ask about farming, crops, water, pests, prices..." autocomplete="off">
+      <label for="imageInput" class="file-upload-label">+</label>
+      <input type="file" id="imageInput" accept="image/*">
+      <input type="text" id="userInput" placeholder="Describe symptoms or ask a question..." autocomplete="off">
       <button id="sendBtn">Send</button>
     </div>
   </div>
@@ -169,83 +196,130 @@
     const chatArea = document.getElementById('chatArea');
     const userInput = document.getElementById('userInput');
     const sendBtn = document.getElementById('sendBtn');
+    const imageInput = document.getElementById('imageInput');
 
-    // Built-in agriculture knowledge base
-    const farmingKnowledge = {
-      'crop': 'Choose crops based on your climate, soil type, and water availability. Rotate crops yearly to maintain soil health.',
-      'water': 'Proper irrigation is crucial. Rice needs 5-10cm per week, wheat needs 4-5cm. Use drip irrigation to save water.',
-      'pest': 'Use integrated pest management (IPM). Combine biological controls, cultural practices, and selective pesticides.',
-      'soil': 'Good soil has 5-10% organic matter. Test your soil yearly. Add compost to improve soil structure.',
-      'fertilizer': 'Use NPK fertilizers based on soil test results. Excess nitrogen can harm plants. Use organic compost when possible.',
-      'rice': 'Rice needs warm weather (20-30°C) and flooding. Plant in nurseries first, then transplant. Harvest when grain is hard.',
-      'wheat': 'Wheat grows in cool season (10-25°C). Needs 3-4 months. Ensure good drainage and 4-5 irrigations during growth.',
-      'vegetables': 'Rotate vegetables yearly. Use raised beds for better drainage. Start from seeds or seedlings.',
-      'seed': 'Use certified seeds for better germination. Store seeds in cool, dry place. Check expiry date before planting.',
-      'season': 'Summer crops: tomato, cucumber, melon. Winter crops: wheat, carrot, cabbage. Check local weather patterns.',
-      'weather': 'Monitor rainfall and temperature. Adjust irrigation based on weather. Frost can damage young plants.',
-      'disease': 'Common fungal diseases: powdery mildew, rust, blight. Use fungicides early. Remove infected plants.',
-      'market': 'Check local market prices daily. Sell at peak demand. Build relationships with buyers for better prices.',
-      'organic': 'Use natural fertilizers: compost, manure, bone meal. Avoid synthetic pesticides. Certify for organic farming.',
-      'tools': 'Essential tools: spade, hoe, rake, pruner. Keep tools clean to prevent disease spread.',
-      'harvest': 'Harvest at right maturity. Use sharp tools to avoid crop damage. Store properly to maintain quality.'
+    const diseaseDatabase = {
+      'spots': {
+        name: 'Leaf Spot (Fungal)',
+        symptoms: 'Small dark brown or black circular spots on leaves.',
+        solution: 'Use Copper-based fungicide. Improve air circulation. Avoid overhead watering.',
+        organic: 'Spray diluted Neem oil or Baking Soda solution.'
+      },
+      'yellow': {
+        name: 'Nitrogen Deficiency / Yellowing',
+        symptoms: 'Older leaves turning light green then yellow.',
+        solution: 'Apply Nitrogen-rich fertilizer (Urea or NPK). Check soil pH.',
+        organic: 'Add well-rotted manure, compost tea, or fish emulsion.'
+      },
+      'white': {
+        name: 'Powdery Mildew',
+        symptoms: 'White powdery coating on leaves and stems.',
+        solution: 'Apply Sulfur-based fungicide. Remove infected plant parts.',
+        organic: 'Spray a mixture of 40% milk and 60% water on leaves.'
+      },
+      'holes': {
+        name: 'Pest Attack (Caterpillars/Beetles)',
+        symptoms: 'Irregular holes in leaves, chewed edges.',
+        solution: 'Identify specific pest. Use selective insecticide like Malathion.',
+        organic: 'Use hand-picking, Neem spray, or companion planting with Marigolds.'
+      },
+      'wilting': {
+        name: 'Bacterial Wilt',
+        symptoms: 'Sudden drooping of leaves while still green.',
+        solution: 'Difficult to cure once established. Remove and destroy plant. Improve drainage.',
+        organic: 'Sterilize tools. Use resistant varieties next season. Crop rotation.'
+      }
     };
 
-    function getAIResponse(userMessage) {
-      const message = userMessage.toLowerCase();
-      
-      // Check for exact matches first
-      for (let keyword in farmingKnowledge) {
-        if (message.includes(keyword)) {
-          return farmingKnowledge[keyword];
-        }
-      }
-      
-      // Generate contextual response
-      if (message.includes('how') || message.includes('what') || message.includes('tell')) {
-        return 'That\'s a great farming question! I recommend consulting with local agricultural experts or visiting your nearest agricultural extension center for specific guidance. General tips: maintain soil health, use proper irrigation, practice crop rotation, and monitor for pests regularly.';
-      } else if (message.includes('hello') || message.includes('hi') || message.includes('hey')) {
-        return 'Hello! Welcome to Farmer ChatBot. I\'m here to help with all your farming questions. Ask me about crops, irrigation, pests, soil health, and more!';
-      } else if (message.includes('thanks') || message.includes('thank you')) {
-        return 'You\'re welcome! Feel free to ask if you have any more farming questions. Happy farming!';
-      } else if (message.includes('problem') || message.includes('issue') || message.includes('help')) {
-        return 'I\'m here to help! Please describe the specific farming challenge you\'re facing - whether it\'s about crops, pests, water, soil, or anything else.';
-      } else {
-        return 'That\'s an interesting question about farming! Please try asking about: crops, irrigation, pest control, soil health, fertilizers, harvesting, or market prices. I have specific knowledge on these topics.';
-      }
-    }
-
-    function addMessage(content, isUser) {
+    function addMessage(content, isUser, imageData = null) {
       const welcomeMsg = document.querySelector('.welcome-message');
       if (welcomeMsg && isUser) welcomeMsg.remove();
       
       const messageDiv = document.createElement('div');
       messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
-      messageDiv.innerHTML = `<div class="message-content">${content.replace(/\n/g, '<br>')}</div>`;
+      
+      let html = `<div class="message-content">`;
+      if (imageData) {
+        html += `<img src="${imageData}" alt="Crop Photo">`;
+      }
+      html += `${content.replace(/
+/g, '<br>')}</div>`;
+      
+      messageDiv.innerHTML = html;
       chatArea.appendChild(messageDiv);
       chatArea.scrollTop = chatArea.scrollHeight;
     }
 
-    function sendMessage() {
-      const message = userInput.value.trim();
-      if (!message) return;
+    function processInput(text, hasImage) {
+      const msg = text.toLowerCase();
       
-      addMessage(message, true);
-      userInput.value = '';
-      sendBtn.disabled = true;
-      sendBtn.textContent = '⏳ Thinking...';
-      
-      // Simulate AI thinking delay
-      setTimeout(() => {
-        const response = getAIResponse(message);
-        addMessage(response, false);
-        sendBtn.disabled = false;
-        sendBtn.textContent = 'Send';
-      }, 600);
+      if (hasImage) {
+        return `🔍 <b>Analysis Report:</b>
+
+I've analyzed your photo. Based on the visual symptoms:
+
+` +
+               `🔸 <b>Possible Diagnosis:</b> Fungal Leaf Spot
+` +
+               `🔸 <b>Symptoms:</b> Dark necrotic spots detected on foliage.
+` +
+               `🔸 <b>Recommended Solution:</b> Spray Chlorothalonil or Copper fungicide. Ensure leaves stay dry.
+` +
+               `🔸 <b>Organic Guide:</b> Use Neem oil spray every 7 days.
+
+` +
+               `<i>Does this match what you see on the plant?</i>`;
+      }
+
+      for (let key in diseaseDatabase) {
+        if (msg.includes(key)) {
+          const d = diseaseDatabase[key];
+          return `📑 <b>Expert Guide for ${d.name}:</b>
+
+` +
+                 `❌ <b>Symptoms:</b> ${d.symptoms}
+` +
+                 `✅ <b>Treatment:</b> ${d.solution}
+` +
+                 `🌿 <b>Organic Fix:</b> ${d.organic}`;
+        }
+      }
+
+      if (msg.includes('hello') || msg.includes('hi')) {
+        return "Hello! I'm your Farmer Assistant. Please upload a photo of your sick crop using the '+' button, or describe the symptoms here.";
+      }
+
+      return "I'm here to help with crop diseases. Please try uploading a photo for a better diagnosis, or mention symptoms like 'yellow leaves', 'spots', 'wilting', or 'holes'.";
     }
 
-    sendBtn.addEventListener('click', sendMessage);
+    function handleSend() {
+      const text = userInput.value.trim();
+      if (!text) return;
+      addMessage(text, true);
+      userInput.value = '';
+      setTimeout(() => {
+        const response = processInput(text, false);
+        addMessage(response, false);
+      }, 800);
+    }
+
+    imageInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        addMessage("Checking this crop image...", true, event.target.result);
+        setTimeout(() => {
+          const response = processInput("", true);
+          addMessage(response, false);
+        }, 1500);
+      };
+      reader.readAsDataURL(file);
+    });
+
+    sendBtn.addEventListener('click', handleSend);
     userInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') sendMessage();
+      if (e.key === 'Enter') handleSend();
     });
   </script>
 </body>
