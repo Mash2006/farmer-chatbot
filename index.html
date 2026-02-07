@@ -252,44 +252,30 @@
 
     function processInput(text, hasImage) {
       const msg = text.toLowerCase();
-      
       if (hasImage) {
-        return `🔍 <b>Analysis Report:</b>
+        return "🔍 <b>Analysis Report:</b>
 
 I've analyzed your photo. Based on the visual symptoms:
 
-` +
-               `🔸 <b>Possible Diagnosis:</b> Fungal Leaf Spot
-` +
-               `🔸 <b>Symptoms:</b> Dark necrotic spots detected on foliage.
-` +
-               `🔸 <b>Recommended Solution:</b> Spray Chlorothalonil or Copper fungicide. Ensure leaves stay dry.
-` +
-               `🔸 <b>Organic Guide:</b> Use Neem oil spray every 7 days.
+🔸 <b>Possible Diagnosis:</b> Fungal Leaf Spot
+🔸 <b>Symptoms:</b> Dark necrotic spots detected on foliage.
+🔸 <b>Recommended Solution:</b> Spray Copper fungicide. Ensure leaves stay dry.
+🔸 <b>Organic Guide:</b> Use Neem oil spray every 7 days.
 
-` +
-               `<i>Does this match what you see on the plant?</i>`;
+<i>Does this match what you see?</i>";
       }
-
       for (let key in diseaseDatabase) {
         if (msg.includes(key)) {
           const d = diseaseDatabase[key];
-          return `📑 <b>Expert Guide for ${d.name}:</b>
+          return "📑 <b>Expert Guide for " + d.name + ":</b>
 
-` +
-                 `❌ <b>Symptoms:</b> ${d.symptoms}
-` +
-                 `✅ <b>Treatment:</b> ${d.solution}
-` +
-                 `🌿 <b>Organic Fix:</b> ${d.organic}`;
+❌ <b>Symptoms:</b> " + d.symptoms + "
+✅ <b>Treatment:</b> " + d.solution + "
+🌿 <b>Organic Fix:</b> " + d.organic;
         }
       }
-
-      if (msg.includes('hello') || msg.includes('hi')) {
-        return "Hello! I'm your Farmer Assistant. Please upload a photo of your sick crop using the '+' button, or describe the symptoms here.";
-      }
-
-      return "I'm here to help with crop diseases. Please try uploading a photo for a better diagnosis, or mention symptoms like 'yellow leaves', 'spots', 'wilting', or 'holes'.";
+      if (msg.includes('hello') || msg.includes('hi')) return "Hello! I'm your Farmer Assistant. Please upload a photo or describe plant symptoms.";
+      return "I'm here to help with crop diseases. Please try uploading a photo or mention symptoms like 'yellow leaves', 'spots', or 'holes'.";
     }
 
     function handleSend() {
