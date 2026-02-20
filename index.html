@@ -301,11 +301,11 @@
             if (welcomeScreen) welcomeScreen.style.display = 'none';
             
             const msgDiv = document.createElement('div');
-            msgDiv.className = `message \${isUser ? 'user' : 'bot'}`;
+            msgDiv.className = `message ${isUser ? 'user' : 'bot'}`;
             
             let html = '';
-            if (image) html += `<img src="\${image}" alt="Uploaded crop">`;
-            html += `<div class="message-content">\${content}</div>`;
+            if (image) html += `<img src="${image}" alt="Uploaded crop">`;
+            html += `<div class="message-content">${content}</div>`;
             
             msgDiv.innerHTML = html;
             chatArea.appendChild(msgDiv);
@@ -321,7 +321,7 @@
             const input = text.toLowerCase();
             
             if (isImage) {
-                return \`🔍 <b>Visual Analysis Result:</b><br>
+                return 🔍 <b>Visual Analysis Result:</b><br>
                 I have scanned your image for visual markers of disease.<br><br>
                 <div class="report-box">
                     <div class="report-item"><span class="report-label">Detected Pattern</span>Yellowing with necrotic spots</div>
@@ -332,17 +332,17 @@
                 1. Isolate affected plants if possible.<br>
                 2. Apply a copper-based fungicide spray.<br>
                 3. 🌿 <b>Organic alternative:</b> Spray Neem oil solution every 5 days.<br><br>
-                <i>Does this match the symptoms you are seeing on the plant?</i>\`;
+                <i>Does this match the symptoms you are seeing on the plant?</i>;
             }
 
             for (let key in diseaseDB) {
                 if (input.includes(key)) {
                     const d = diseaseDB[key];
-                    return \`📝 <b>Expert Diagnosis: \${d.name}</b><br><br>
-                    ❗ <b>Cause:</b> \${d.cause}<br>
-                    👁️ <b>Symptoms:</b> \${d.symptoms}<br><br>
-                    ✅ <b>Treatment Plan:</b><br>\${d.solution}<br><br>
-                    🌿 <b>Organic Solution:</b><br>\${d.organic}\`;
+                    return 📝 <b>Expert Diagnosis: ${d.name}</b><br><br>
+                    ❗ <b>Cause:</b> ${d.cause}<br>
+                    👁️ <b>Symptoms:</b> ${d.symptoms}<br><br>
+                    ✅ <b>Treatment Plan:</b><br>${d.solution}<br><br>
+                    🌿 <b>Organic Solution:</b><br>${d.organic};
                 }
             }
 
