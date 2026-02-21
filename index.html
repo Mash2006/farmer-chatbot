@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Farmer ChatBot - AI Disease Expert</title>
+    <title>Farmer ChatBot AI - Assistant</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -17,7 +17,7 @@
         }
         .container {
             width: 100%;
-            max-width: 900px;
+            max-width: 800px;
             background: white;
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.4);
@@ -25,7 +25,6 @@
             display: flex;
             flex-direction: column;
             height: 90vh;
-            max-height: 800px;
         }
         .header {
             background: linear-gradient(135deg, #2d5016 0%, #1a3a0a 100%);
@@ -33,367 +32,106 @@
             padding: 20px;
             text-align: center;
             border-bottom: 5px solid #ffc107;
-            position: relative;
         }
-        .header h1 { font-size: 28px; margin-bottom: 5px; }
-        .header p { font-size: 14px; opacity: 0.9; }
-        .tagline { font-size: 11px; color: #ffc107; font-weight: bold; letter-spacing: 2px; text-transform: uppercase; margin-top: 5px; }
-        
+        .header h1 { font-size: 24px; margin-bottom: 5px; }
         .chat-area {
             flex: 1;
             overflow-y: auto;
             padding: 20px;
             background: #fafaf5;
-            scroll-behavior: smooth;
         }
         .message {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             display: flex;
             flex-direction: column;
             animation: fadeIn 0.3s ease;
         }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
         .message.user { align-items: flex-end; }
         .message.bot { align-items: flex-start; }
-        
         .message-content {
-            max-width: 85%;
-            padding: 14px 18px;
+            max-width: 80%;
+            padding: 12px 16px;
             border-radius: 15px;
-            line-height: 1.6;
-            font-size: 14.5px;
-            position: relative;
+            font-size: 14px;
+            line-height: 1.5;
         }
-        .message.user .message-content {
-            background: #2d5016;
-            color: white;
-            border-bottom-right-radius: 2px;
-        }
-        .message.bot .message-content {
-            background: white;
-            color: #222;
-            border: 2px solid #2d5016;
-            border-bottom-left-radius: 2px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        }
-        .message img {
-            max-width: 250px;
-            border-radius: 12px;
-            margin-bottom: 10px;
-            border: 3px solid #fff;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-        
+        .message.user .message-content { background: #2d5016; color: white; border-bottom-right-radius: 2px; }
+        .message.bot .message-content { background: white; color: #333; border: 2px solid #2d5016; border-bottom-left-radius: 2px; }
         .input-area {
-            padding: 20px;
+            padding: 15px;
             background: white;
             border-top: 1px solid #eee;
             display: flex;
-            gap: 12px;
-            align-items: center;
+            gap: 10px;
         }
-        .input-group {
-            flex: 1;
-            display: flex;
-            background: #f5f5f5;
-            border-radius: 30px;
-            padding: 5px 15px;
-            align-items: center;
-            border: 2px solid transparent;
-            transition: all 0.3s;
-        }
-        .input-group:focus-within {
-            border-color: #2d5016;
-            background: white;
-            box-shadow: 0 0 0 4px rgba(45, 80, 22, 0.1);
-        }
-        .input-group input {
-            flex: 1;
-            border: none;
-            background: transparent;
-            padding: 10px;
-            outline: none;
-            font-size: 15px;
-        }
-        
-        .btn-upload {
-            color: #2d5016;
-            cursor: pointer;
-            font-size: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: 0.2s;
-        }
-        .btn-upload:hover { transform: scale(1.1); color: #4a7c2c; }
-        
-        .btn-send {
-            background: #2d5016;
-            color: white;
-            border: none;
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: 0.3s;
-            box-shadow: 0 4px 10px rgba(45, 80, 22, 0.3);
-        }
-        .btn-send:hover { transform: rotate(-10deg) scale(1.1); background: #1a3a0a; }
-        
-        #imageInput { display: none; }
-        
-        .typing {
-            font-style: italic;
-            font-size: 12px;
-            color: #666;
-            margin-bottom: 10px;
-            display: none;
-        }
-        
-        .report-box {
-            background: #fff;
-            border-left: 4px solid #ffc107;
-            padding: 10px;
-            margin-top: 10px;
-            border-radius: 4px;
-        }
-        .report-item { margin-bottom: 8px; }
-        .report-label { font-weight: bold; color: #2d5016; display: block; font-size: 12px; text-transform: uppercase; }
-        
-        .welcome-screen {
-            text-align: center;
-            padding: 40px 20px;
-        }
-        .welcome-screen h2 { color: #2d5016; margin-bottom: 15px; }
-        .welcome-screen p { color: #555; margin-bottom: 25px; font-size: 15px; }
-        .card-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-        .card {
-            background: white;
-            padding: 15px;
-            border-radius: 15px;
-            border: 1px solid #e0e0e0;
-            cursor: pointer;
-            transition: 0.3s;
-            text-align: left;
-        }
-        .card:hover { border-color: #2d5016; transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        .card-icon { font-size: 20px; margin-bottom: 8px; display: block; }
-        .card-title { font-weight: bold; font-size: 13px; color: #2d5016; }
+        .input-group { flex: 1; background: #f5f5f5; border-radius: 25px; padding: 5px 15px; border: 2px solid transparent; }
+        .input-group:focus-within { border-color: #2d5016; background: white; }
+        .input-group input { width: 100%; border: none; background: transparent; padding: 8px; outline: none; }
+        .btn-send { background: #2d5016; color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .typing { font-size: 12px; color: #666; padding: 5px 20px; display: none; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <h1>🌾 Farmer ChatBot AI</h1>
-            <p>Smart Crop Diagnostic & Treatment System</p>
-            <div class="tagline">Scan • Diagnose • Heal</div>
+            <p>Your 24/7 Agricultural Expert Assistant</p>
         </div>
-        
         <div class="chat-area" id="chatArea">
-            <div class="welcome-screen" id="welcomeScreen">
-                <h2>🌱 Hello, Farmer!</h2>
-                <p>I'm your AI Agricultural Expert. Upload a photo of a sick plant or ask me a question to get started.</p>
-                
-                <div class="card-grid">
-                    <div class="card" onclick="quickAction('My leaves have spots')">
-                        <span class="card-icon">🔍</span>
-                        <span class="card-title">Identify Disease</span>
-                    </div>
-                    <div class="card" onclick="quickAction('Give me a treatment plan for yellow leaves')">
-                        <span class="card-icon">💊</span>
-                        <span class="card-title">Treatment Plan</span>
-                    </div>
-                    <div class="card" onclick="quickAction('Organic way to kill pests')">
-                        <span class="card-icon">🌿</span>
-                        <span class="card-title">Organic Solutions</span>
-                    </div>
-                    <div class="card" onclick="quickAction('Tips for better crop yield')">
-                        <span class="card-icon">📈</span>
-                        <span class="card-title">Growth Tips</span>
-                    </div>
-                </div>
-                <p style="font-size: 12px; color: #888;">Try saying: \"My rice plant has brown spots\" or upload an image.</p>
+            <div class="message bot">
+                <div class="message-content">Hello! I am your AI Farming Assistant. I can help you diagnose crop diseases and provide treatment plans. What's happening in your farm today?</div>
             </div>
         </div>
-        
-        <div id="typingIndicator" class="typing" style="padding: 0 20px;">AI is thinking...</div>
-        
+        <div id="typingIndicator" class="typing">Assistant is thinking...</div>
         <div class="input-area">
-            <label for="imageInput" class="btn-upload" title="Upload Photo">➕</label>
-            <input type="file" id="imageInput" accept="image/*">
             <div class="input-group">
-                <input type="text" id="userInput" placeholder="Ask about symptoms or upload a photo..." autocomplete="off">
+                <input type="text" id="userInput" placeholder="Describe symptoms (e.g., 'yellow spots on leaves')..." autocomplete="off">
             </div>
             <button class="btn-send" id="sendBtn">➤</button>
         </div>
     </div>
-
     <script>
         const chatArea = document.getElementById('chatArea');
         const userInput = document.getElementById('userInput');
         const sendBtn = document.getElementById('sendBtn');
-        const imageInput = document.getElementById('imageInput');
         const typingIndicator = document.getElementById('typingIndicator');
-        const welcomeScreen = document.getElementById('welcomeScreen');
-
         const diseaseDB = {
-            'leaf spot': {
-                name: 'Cercospora Leaf Spot',
-                cause: 'Fungal infection (Cercospora)',
-                symptoms: 'Small, circular spots with grayish centers and dark borders.',
-                solution: 'Spray Chlorothalonil or Copper fungicide. Remove infected debris.',
-                organic: 'Apply Neem oil spray or a mixture of baking soda and water.'
-            },
-            'yellow': {
-                name: 'Nutrient Deficiency (Nitrogen)',
-                cause: 'Lack of Nitrogen in soil',
-                symptoms: 'Overall yellowing of older leaves, stunted growth.',
-                solution: 'Apply Nitrogen-rich fertilizer like Urea or NPK 20-10-10.',
-                organic: 'Use compost tea, fish emulsion, or well-rotted manure.'
-            },
-            'blast': {
-                name: 'Rice Blast',
-                cause: 'Fungus Magnaporthe oryzae',
-                symptoms: 'Spindle-shaped spots on leaves with gray centers.',
-                solution: 'Use Tricyclazole or Benomyl. Avoid excessive nitrogen.',
-                organic: 'Apply Pseudomonas fluorescens bio-control agent.'
-            },
-            'blight': {
-                name: 'Early Blight (Tomato/Potato)',
-                cause: 'Fungus Alternaria solani',
-                symptoms: 'Target-like concentric rings on older leaves.',
-                solution: 'Apply Mancozeb or Copper-based sprays. Rotate crops.',
-                organic: 'Mulch plants to prevent soil splash. Use Serenade (Bacillus subtilis).'
-            },
-            'canker': {
-                name: 'Citrus Canker',
-                cause: 'Bacteria Xanthomonas citri',
-                symptoms: 'Raised, corky lesions on leaves, stems, and fruit.',
-                solution: 'Copper-based bactericides. Prune infected branches.',
-                organic: 'There is no cure; prevention is key. Use windbreaks and sanitation.'
-            },
-            'mildew': {
-                name: 'Powdery Mildew',
-                cause: 'Fungal spores',
-                symptoms: 'White, flour-like coating on leaves.',
-                solution: 'Sulfur dust or Potassium Bicarbonate sprays.',
-                organic: 'Spray a 1:9 ratio of milk to water on affected areas.'
-            },
-            'aphids': {
-                name: 'Aphid Infestation',
-                cause: 'Small sap-sucking insects',
-                symptoms: 'Curled leaves, sticky honey-dew, presence of small green/black bugs.',
-                solution: 'Spray Imidacloprid or Malathion.',
-                organic: 'Strong water spray, insecticidal soap, or introducing ladybugs.'
-            }
+            'leaf spot': { name: 'Cercospora Leaf Spot', cause: 'Fungal infection', symptoms: 'Small circular spots with gray centers.', solution: 'Apply Copper fungicide.', organic: 'Neem oil spray.' },
+            'yellow': { name: 'Nutrient Deficiency', cause: 'Lack of Nitrogen', symptoms: 'Yellowing of older leaves.', solution: 'Apply Urea fertilizer.', organic: 'Compost tea.' },
+            'blast': { name: 'Rice Blast', cause: 'Fungus Magnaporthe', symptoms: 'Spindle-shaped spots on leaves.', solution: 'Apply Tricyclazole.', organic: 'Pseudomonas bio-control.' },
+            'pests': { name: 'General Pest Attack', cause: 'Sap-sucking insects', symptoms: 'Curled leaves or sticky residue.', solution: 'Apply Imidacloprid.', organic: 'Insecticidal soap.' }
         };
-
-        function addMessage(content, isUser, image = null) {
-            if (welcomeScreen) welcomeScreen.style.display = 'none';
-            
+        function addMessage(text, isUser) {
             const msgDiv = document.createElement('div');
             msgDiv.className = `message ${isUser ? 'user' : 'bot'}`;
-            
-            let html = '';
-            if (image) html += `<img src="${image}" alt="Uploaded crop">`;
-            html += `<div class="message-content">${content}</div>`;
-            
-            msgDiv.innerHTML = html;
+            msgDiv.innerHTML = `<div class="message-content">${text}</div>`;
             chatArea.appendChild(msgDiv);
             chatArea.scrollTop = chatArea.scrollHeight;
         }
-
-        function showTyping(show) {
-            typingIndicator.style.display = show ? 'block' : 'none';
-            chatArea.scrollTop = chatArea.scrollHeight;
-        }
-
-        function processInput(text, isImage = false) {
-            const input = text.toLowerCase();
-            
-            if (isImage) {
-                return 🔍 <b>Visual Analysis Result:</b><br>
-                I have scanned your image for visual markers of disease.<br><br>
-                <div class="report-box">
-                    <div class="report-item"><span class="report-label">Detected Pattern</span>Yellowing with necrotic spots</div>
-                    <div class="report-item"><span class="report-label">Likely Disease</span>Fungal Leaf Spot (Early Stage)</div>
-                    <div class="report-item"><span class="report-label">Confidence</span>89%</div>
-                </div><br>
-                <b>Recommended Action:</b><br>
-                1. Isolate affected plants if possible.<br>
-                2. Apply a copper-based fungicide spray.<br>
-                3. 🌿 <b>Organic alternative:</b> Spray Neem oil solution every 5 days.<br><br>
-                <i>Does this match the symptoms you are seeing on the plant?</i>;
-            }
-
+        function getReply(input) {
+            const text = input.toLowerCase();
             for (let key in diseaseDB) {
-                if (input.includes(key)) {
+                if (text.includes(key)) {
                     const d = diseaseDB[key];
-                    return 📝 <b>Expert Diagnosis: ${d.name}</b><br><br>
-                    ❗ <b>Cause:</b> ${d.cause}<br>
-                    👁️ <b>Symptoms:</b> ${d.symptoms}<br><br>
-                    ✅ <b>Treatment Plan:</b><br>${d.solution}<br><br>
-                    🌿 <b>Organic Solution:</b><br>${d.organic};
+                    return `<b>Diagnosis: ${d.name}</b><br><br>Cause: ${d.cause}<br>Symptoms: ${d.symptoms}<br><br><b>Treatment:</b> ${d.solution}<br><b>Organic:</b> ${d.organic}`;
                 }
             }
-
-            if (input.includes('hi') || input.includes('hello')) {
-                return "Hello! I am your AI Farming Assistant. How can I help your crops today? You can describe symptoms or upload a photo.";
-            }
-            
-            if (input.includes('yield') || input.includes('grow')) {
-                return "To improve crop yield, ensure: <br>1. Proper soil testing (pH & nutrients).<br>2. Balanced fertilization (NPK).<br>3. Efficient irrigation (drip is best).<br>4. Integrated Pest Management (IPM).";
-            }
-
-            return "I'm not quite sure about that specific symptom. Could you provide more details? Try mentioning 'spots', 'yellowing', 'wilting', or 'holes' on the leaves.";
+            if (text.includes('hi') || text.includes('hello')) return "Hello! How can I help you with your crops today?";
+            if (text.includes('help')) return "You can tell me about plant symptoms like 'yellow leaves', 'brown spots', or ask for 'growth tips'.";
+            return `I understand you're asking about "${input}". To give you the best advice, could you specify if you see spots, yellowing, or pests?`;
         }
-
         function handleSend() {
             const val = userInput.value.trim();
             if (!val) return;
-            
             addMessage(val, true);
             userInput.value = '';
-            
-            showTyping(true);
+            typingIndicator.style.display = 'block';
             setTimeout(() => {
-                showTyping(false);
-                const resp = processInput(val);
-                addMessage(resp, false);
-            }, 1000);
+                typingIndicator.style.display = 'none';
+                addMessage(getReply(val), false);
+            }, 800);
         }
-
-        function quickAction(text) {
-            userInput.value = text;
-            handleSend();
-        }
-
-        imageInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                addMessage("Scanning this crop photo for diseases...", true, event.target.result);
-                showTyping(true);
-                setTimeout(() => {
-                    showTyping(false);
-                    const resp = processInput("", true);
-                    addMessage(resp, false);
-                }, 2000);
-            };
-            reader.readAsDataURL(file);
-        });
-
         sendBtn.addEventListener('click', handleSend);
         userInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleSend(); });
     </script>
